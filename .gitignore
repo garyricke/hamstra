@@ -10,3 +10,6 @@ veo3_video_*.mp4
 landing-pages/img/*.png
 landing-pages/video/hero.webm
 landing-pages/video/hero-poster.jpg
+
+# Secrets — never commit
+.env
