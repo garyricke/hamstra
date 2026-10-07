@@ -144,6 +144,10 @@ function initFinder(){
 function initForm(){
   var f=document.getElementById('inspect');
   if(!f) return;
+  // ?need=hail (etc.) from an article or service page preselects the request type
+  var NEED={hail:'Hail or storm damage',leak:'Roof leak or repair',replace:'Roof replacement estimate',multi:'Multi-family / HOA',cert:'Something else'};
+  var need=new URLSearchParams(location.search).get('need'), sel=document.getElementById('f-type');
+  if(need&&NEED[need]&&sel){ sel.value=NEED[need]; if(need==='cert'){ var m=document.getElementById('f-msg'); if(m&&!m.value) m.value='Roof certification for a home sale'; } }
   f.addEventListener('submit',function(e){
     e.preventDefault();
     var btn=f.querySelector('button[type=submit]'); btn.disabled=true; btn.textContent='Sending…';
