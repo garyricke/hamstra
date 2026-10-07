@@ -139,7 +139,7 @@
   @media(max-width:760px){.steps{grid-template-columns:1fr}}
 
   /* Vertical video reels (guides + stories) */
-  .reels{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,1fr);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin}
+  .reels{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(200px,230px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;scrollbar-width:thin}
   .reel{scroll-snap-align:start;display:flex;flex-direction:column;gap:10px}
   .reel .th{position:relative;aspect-ratio:9/16;border-radius:12px;overflow:hidden;background:#222 center/cover no-repeat;box-shadow:0 8px 22px -12px rgba(0,0,0,.5)}
   .reel .th .play{position:absolute;right:10px;bottom:10px;width:40px;height:40px;border-radius:50%;background:var(--red);display:grid;place-items:center;color:#fff;transition:transform .15s}
