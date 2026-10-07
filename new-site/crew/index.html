@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Crew job-photo uploader — DEMO (Oct 7 2026). Answers Joe's Sep 30 ask: an easy way for
+     crew to add photos, colors and towns. Nothing is uploaded yet; the submit screen says so. -->
+<title>Add Job Photos | Hamstra Crew</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#141414">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23EB1A2C'/%3E%3Ctext x='16' y='23' font-family='Arial,sans-serif' font-size='20' font-weight='900' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/new-site/site.css">
+<style>
+  body{background:#f4f4f5;padding-bottom:110px}
+  .app-head{background:#141414;color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+  .app-head .t{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.35rem;text-transform:uppercase;letter-spacing:.03em}
+  .app-head .t small{display:block;font-family:'Barlow',sans-serif;font-weight:500;font-size:.75rem;letter-spacing:.06em;color:#9a9a9a;text-transform:uppercase}
+  .demo-pill{background:#fdeaec;color:#a30f1b;font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:30px}
+  .wrapx{max-width:560px;margin:0 auto;padding:16px}
+  .card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid var(--gray-line)}
+  .card h2{font-size:1.35rem;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .card h2 .n{width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:1rem;flex:none}
+  .card .hint{color:var(--muted);font-size:.92rem;margin-bottom:12px}
+  .card.done h2 .n{background:#1a7f37}
+  input[type=text]{width:100%;padding:14px;border:1.5px solid var(--gray-line);border-radius:10px;font:inherit;font-size:1.05rem}
+  input[type=text]:focus{outline:none;border-color:var(--red)}
+  .row{display:flex;gap:8px;margin-top:10px}
+  .ghost{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--gray-line);border-radius:10px;padding:11px 14px;font:inherit;font-weight:600;cursor:pointer;color:var(--ink)}
+  .ghost .icon{width:20px;height:20px;color:var(--red)}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg button,.prod button{border:2px solid var(--gray-line);background:#fff;border-radius:12px;padding:14px 8px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.15rem;text-transform:uppercase;cursor:pointer;color:var(--ink)}
+  .seg button[aria-pressed=true],.prod button[aria-pressed=true]{border-color:var(--red);background:#fdeaec;color:#a30f1b}
+  .prod{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+  .prod button{font-size:1rem;padding:12px 8px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--gray-line);background:#fff;border-radius:40px;padding:7px 13px 7px 7px;font:inherit;font-size:.95rem;font-weight:600;cursor:pointer;color:var(--ink)}
+  .chip .sw{width:22px;height:22px;border-radius:50%;border:1px solid rgba(0,0,0,.2)}
+  .chip[aria-pressed=true]{border-color:var(--red);background:#fdeaec}
+  .shoot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:2px dashed #c9c9cf;border-radius:14px;padding:26px;cursor:pointer;color:var(--muted);font-weight:600;text-align:center}
+  .shoot .icon{width:40px;height:40px;color:var(--red)}
+  .shoot input{display:none}
+  .thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .thumbs div{aspect-ratio:1;border-radius:10px;background:#ddd center/cover;position:relative}
+  .thumbs button{position:absolute;top:5px;right:5px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;display:grid;place-items:center}
+  .thumbs button .icon{width:14px;height:14px}
+  .tip{background:#fff8e6;border-left:4px solid #f5a623;border-radius:8px;padding:12px 14px;font-size:.9rem;color:#5c4a16;margin-top:12px}
+  .send{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:20}
+  .send .btn{width:100%;justify-content:center;max-width:528px;margin:0 auto;display:flex}
+  .send .btn[disabled]{background:#c9c9cf;box-shadow:none;cursor:not-allowed;transform:none}
+  .send .need{text-align:center;font-size:.85rem;color:var(--muted);margin-top:6px}
+  .result{display:none}
+  .result .ok{width:64px;height:64px;border-radius:50%;background:#1a7f37;color:#fff;display:grid;place-items:center;margin:8px auto 14px}
+  .result .ok .icon{width:34px;height:34px}
+  .result h2{text-align:center;justify-content:center}
+  .result dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:14px 0}
+  .result dt{font-weight:700;color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+  .result .demo-note{background:#fdeaec;border-radius:10px;padding:12px 14px;color:#7a1220;font-size:.92rem}
+  .mobile-call{display:none!important}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+</defs></svg>
+
+<div id="gate">
+  <div class="gbox">
+    <div class="gline"></div>
+    <h2>Hamstra Crew</h2>
+    <p>Enter the crew password to add job photos.</p>
+    <div class="gfield">
+      <input id="gpass" type="password" placeholder="Enter password" autocomplete="off" aria-label="Password">
+      <button class="btn btn-red" type="button" onclick="checkGate()">Enter</button>
+    </div>
+    <div class="gerr" id="gerr" role="alert"></div>
+  </div>
+</div>
+
+<header class="app-head">
+  <div class="t">Add job photos<small>Hamstra crew</small></div>
+  <span class="demo-pill">Demo</span>
+</header>
+
+<main class="wrapx" id="app">
+  <section class="card" id="c-job">
+    <h2><span class="n">1</span>Which job?</h2>
+    <p class="hint">Street address, or just the town if you&rsquo;re in a hurry.</p>
+    <input type="text" id="addr" placeholder="e.g. 123 Maple St" autocomplete="off" aria-label="Street address">
+    <div class="row">
+      <input type="text" id="town" list="towns" placeholder="Town" autocomplete="off" aria-label="Town">
+      <datalist id="towns"></datalist>
+    </div>
+    <div class="row"><button class="ghost" type="button" id="locate"><svg class="icon"><use href="#i-pin"/></svg>Use my location</button></div>
+  </section>
+
+  <section class="card" id="c-stage">
+    <h2><span class="n">2</span>Which stage?</h2>
+    <p class="hint">Before, during and after shots of the same job make the best story.</p>
+    <div class="seg" role="group" aria-label="Stage">
+      <button type="button" data-v="Before" aria-pressed="false">Before</button>
+      <button type="button" data-v="During" aria-pressed="false">During</button>
+      <button type="button" data-v="After" aria-pressed="false">After</button>
+    </div>
+  </section>
+
+  <section class="card" id="c-shingle">
+    <h2><span class="n">3</span>Shingle &amp; color</h2>
+    <p class="hint">This is what powers the color filter on the project map.</p>
+    <div class="prod" role="group" aria-label="Shingle line">
+      <button type="button" data-v="OC TruDefinition Duration" aria-pressed="false">OC Duration</button>
+      <button type="button" data-v="OC Oakridge" aria-pressed="false">OC Oakridge</button>
+      <button type="button" data-v="CertainTeed Landmark PRO" aria-pressed="false">Landmark PRO</button>
+      <button type="button" data-v="Other" aria-pressed="false">Other</button>
+    </div>
+    <div class="chips" id="colors" role="group" aria-label="Color"></div>
+  </section>
+
+  <section class="card" id="c-photos">
+    <h2><span class="n">4</span>Take photos</h2>
+    <p class="hint">Take as many as you like. Wide shots of the whole roof work best.</p>
+    <label class="shoot"><svg class="icon"><use href="#i-camera"/></svg><span>Tap to open the camera</span>
+      <input type="file" id="files" accept="image/*" capture="environment" multiple></label>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="tip"><b>Using the 360 on the long stick?</b> Upload the 360 file the same way. Gary pulls the best stills out of it.</div>
+  </section>
+
+  <section class="card result" id="result" aria-live="polite">
+    <div class="ok"><svg class="icon"><use href="#i-check"/></svg></div>
+    <h2>Got it, thanks!</h2>
+    <dl id="summary"></dl>
+    <div class="thumbs" id="sumthumbs"></div>
+    <p class="demo-note" style="margin-top:14px"><b>Demo:</b> nothing was uploaded. When this goes live, these photos go straight to the project map, tagged with the town, stage and color, for Gary to approve.</p>
+    <div class="row" style="margin-top:14px"><button class="ghost" type="button" id="again"><svg class="icon"><use href="#i-camera"/></svg>Add another job</button></div>
+  </section>
+</main>
+
+<div class="send" id="sendbar">
+  <button class="btn btn-red" type="button" id="send" disabled><svg class="icon"><use href="#i-upload"/></svg>Send to the project map</button>
+  <div class="need" id="need">Add a town and at least one photo</div>
+</div>
+
+<script src="/new-site/site.js"></script>
+<script>
+(function(){
+  var COLORS=['Driftwood','Onyx Black','Estate Gray','Teak','Brownwood','Desert Rose','Desert Tan','Peppercorn','Slatestone Gray','Williamsburg Gray','Sand Castle','Sierra Gray'];
+  var state={stage:'',product:'',color:'',files:[]};
+  var TOWNS=[];
+  var $=function(id){return document.getElementById(id)};
+
+  fetch('/new-site/towns.json').then(function(r){return r.json()}).then(function(d){
+    TOWNS=d; var dl=$('towns');
+    d.slice().sort(function(a,b){return a.t.localeCompare(b.t)}).forEach(function(t){var o=document.createElement('option');o.value=t.t;dl.appendChild(o);});
+  });
+
+  COLORS.forEach(function(c){
+    var b=document.createElement('button'); b.type='button'; b.className='chip'; b.setAttribute('aria-pressed','false'); b.dataset.v=c;
+    b.innerHTML='<span class="sw" style="background:'+(SWATCH[c]||'#9a9a9a')+'"></span>'+c; $('colors').appendChild(b);
+  });
+
+  function pickGroup(sel,key){
+    document.querySelectorAll(sel+' button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var on=state[key]!==b.dataset.v; state[key]=on?b.dataset.v:'';
+        document.querySelectorAll(sel+' button').forEach(function(x){x.setAttribute('aria-pressed',String(on&&x===b))});
+        check();
+      });
+    });
+  }
+  pickGroup('.seg','stage'); pickGroup('.prod','product');
+  $('colors').addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b) return;
+    var on=state.color!==b.dataset.v; state.color=on?b.dataset.v:'';
+    $('colors').querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',String(on&&x===b))}); check();
+  });
+
+  // Nearest town by straight-line distance to each town's centroid
+  $('locate').addEventListener('click',function(){
+    var btn=this; if(!navigator.geolocation){btn.lastChild.textContent='Location not available';return;}
+    btn.lastChild.textContent='Finding you…';
+    navigator.geolocation.getCurrentPosition(function(p){
+      var best=null,bd=1e9,la=p.coords.latitude,lo=p.coords.longitude;
+      TOWNS.forEach(function(t){var d=Math.pow(t.lat-la,2)+Math.pow((t.lng-lo)*Math.cos(la*Math.PI/180),2); if(d<bd){bd=d;best=t;}});
+      if(best){$('town').value=best.t; btn.lastChild.textContent='Near '+best.t; check();}
+    },function(){btn.lastChild.textContent='Couldn’t get location';},{timeout:8000});
+  });
+  ['addr','town'].forEach(function(id){$(id).addEventListener('input',check)});
+
+  $('files').addEventListener('change',function(){
+    Array.prototype.forEach.call(this.files,function(f){state.files.push({f:f,url:URL.createObjectURL(f)})});
+    this.value=''; drawThumbs(); check();
+  });
+  function drawThumbs(){
+    $('thumbs').innerHTML=state.files.map(function(x,i){return '<div style="background-image:url('+x.url+')"><button type="button" data-i="'+i+'" aria-label="Remove photo"><svg class="icon"><use href="#i-x"/></svg></button></div>'}).join('');
+  }
+  $('thumbs').addEventListener('click',function(e){var b=e.target.closest('button'); if(!b) return; URL.revokeObjectURL(state.files[b.dataset.i].url); state.files.splice(+b.dataset.i,1); drawThumbs(); check();});
+
+  function check(){
+    var town=$('town').value.trim(), n=state.files.length;
+    $('c-job').classList.toggle('done',!!town); $('c-stage').classList.toggle('done',!!state.stage);
+    $('c-shingle').classList.toggle('done',!!(state.product&&state.color)); $('c-photos').classList.toggle('done',n>0);
+    var ok=town&&n>0; $('send').disabled=!ok;
+    $('need').textContent=ok?(n+' photo'+(n===1?'':'s')+' ready'+(state.stage?' · '+state.stage:'')):'Add a town and at least one photo';
+  }
+
+  $('send').addEventListener('click',function(){
+    var rows=[['Job',[$('addr').value.trim(),$('town').value.trim()].filter(Boolean).join(', ')],['Stage',state.stage||'Not set'],
+              ['Shingle',[state.product,state.color].filter(Boolean).join(' · ')||'Not set'],['Photos',String(state.files.length)]];
+    $('summary').innerHTML=rows.map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1].replace(/</g,'&lt;')+'</dd>'}).join('');
+    $('sumthumbs').innerHTML=state.files.slice(0,6).map(function(x){return '<div style="background-image:url('+x.url+')"></div>'}).join('');
+    ['c-job','c-stage','c-shingle','c-photos','sendbar'].forEach(function(id){$(id).style.display='none'});
+    $('result').style.display='block'; window.scrollTo(0,0);
+  });
+  $('again').addEventListener('click',function(){location.reload()});
+})();
+</script>
+</body>
+</html>
